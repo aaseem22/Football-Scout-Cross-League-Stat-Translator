@@ -135,7 +135,8 @@ class Generator(nn.Module):
 # ── Load dataset ──────────────────────────────────────────────────
 @st.cache_data
 def load_dataset():
-    data_path = Path("data")
+    base = Path(__file__).parent
+    data_path = base / "data"
     dfs = []
     for f in sorted(data_path.glob("cleaned_*.csv")):
         df = pd.read_csv(f)
@@ -161,11 +162,12 @@ def load_dataset():
 # ── Load models ───────────────────────────────────────────────────
 @st.cache_resource
 def load_models():
-    scaler = joblib.load("models/scaler.pkl")
+    base = Path(__file__).parent
+    scaler = joblib.load(base / "models" / "scaler.pkl")
     G_AB   = Generator(len(FEATURES))
     G_BA   = Generator(len(FEATURES))
-    G_AB.load_state_dict(torch.load("models/G_AB.pt", map_location="cpu"))
-    G_BA.load_state_dict(torch.load("models/G_BA.pt", map_location="cpu"))
+    G_AB.load_state_dict(torch.load(base / "models" / "G_AB.pt", map_location="cpu"))
+    G_BA.load_state_dict(torch.load(base / "models" / "G_BA.pt", map_location="cpu"))
     G_AB.eval()
     G_BA.eval()
     return G_AB, G_BA, scaler
